@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSI2 24-25</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1 id="nomAuteur">Data from JSON</h1>
+    <div id="data-container"></div>
+
+    <script>
+        // Load JSON data
+        d3.json("https://argument.generateur.art/api/items/445").then(function(data) {
+            // Select the container
+            var container = d3.select("#data-container");
+
+            d3.select("#nomAuteur").text(data["o:title"]);
+
+            // Append data to the container
+            container.selectAll("h2")
+                .data(data["dcterms:description"])
+                .enter()
+                .append("h2")
+                .text(function(d) { return d["@value"]; });
+        }).catch(function(error) {
+            console.error('Error loading or parsing data:', error);
+        });
+    </script>
+</body>
+</html>
