@@ -20,7 +20,7 @@
         d3.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQkl_iQVTsYRlRkdXZd-jrl23mmhESsC2VBh7FreKp6xaRWJ3_aPXt_VxXwCnV31Rs72aXQ-sqyIuD4/pub?output=csv").then(function(data) {
             // Select the container
             var container = d3.select("#data-container");
-            let dataEtu = data.filter(d=>d["Votre identifiant omeka"]==32);
+            let dataEtu = data.filter(d=>d["Votre identifiant omeka"]==22);
 
             // Append data to the container
             let divEtu = container.selectAll("div")
