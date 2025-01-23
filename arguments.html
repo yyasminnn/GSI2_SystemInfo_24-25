@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSI2 24-25</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+.gen{
+    color:red;
+    margin:1px;
+}
+    </style>
+</head>
+<body>
+    <div id="data-container"></div>
+
+    <script>
+        // Load JSON data
+        d3.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQkl_iQVTsYRlRkdXZd-jrl23mmhESsC2VBh7FreKp6xaRWJ3_aPXt_VxXwCnV31Rs72aXQ-sqyIuD4/pub?output=csv").then(function(data) {
+            // Select the container
+            var container = d3.select("#data-container");
+            let dataEtu = data.filter(d=>d["Votre identifiant omeka"]==32);
+
+            // Append data to the container
+            let divEtu = container.selectAll("div")
+                .data(dataEtu)
+                .enter()
+                .append("div")
+                .attr("id",d=>"etu"+d["Votre identifiant omeka"]);
+            
+            divEtu.append("h1").text(function(d) { return d["Votre nom et prénom"]; });
+            divEtu.append("a").attr("href",d=>"https://"+d["Votre login github"]+".github.io/GSI2_SystemInfo_24-25/")
+                .text(d=>d["Votre login github"]+ " page Web")
+            divEtu.append('br')
+            divEtu.append("a").attr("href",d=>"https://github.com/"+d["Votre login github"]+"/GSI2_SystemInfo_24-25/")
+                .text(d=>d["Votre login github"]+ " sources")
+            divEtu.append('br')
+            divEtu.append('button')
+                    .text('Voir les arguments')
+                    .on('click',showArguments);
+
+        }).catch(function(error) {
+            console.error('Error loading or parsing data:', error);
+        });
+
+
+        function showArguments(e,d){
+            console.log(e,d);
+            //supprimer les anciennes informations
+            d3.select('#etu'+d.id).select('ul').remove();
+            //récupérer d'omk la lsite des argument d'un participant
+            d3.json("https://argument.generateur.art/api/items?resource_class_id=107&owner_id="+d["Votre identifiant omeka"])
+            .then(rs=>{
+                console.log(rs);
+                //ajouter la liste des argument du participant
+                let ulEtuArgu = d3.select('#etu'+d["Votre identifiant omeka"]).append('ul'),
+                //ajoute chaque argument
+                arguments = ulEtuArgu.selectAll('li').data(rs).enter().append('li')
+                    .attr('id',d=>'argu'+d['o:id'])
+                //Ajoute le lien vers l'argument dans omk
+                arguments.append('a')
+                    .attr('href',d=>'https://argument.generateur.art/admin/item/'+d['o:id'])
+                    .attr('target','_blanck')
+                    .text(d=>d["o:title"]);
+                arguments.append('button')
+                    .text('Générer des arguments')
+                    .on('click',genereArgument);
+
+            })
+        }
+
+        function genereArgument(e,arg){
+            let argu = d3.select('#argu'+arg['o:id']);
+            argu.select('div').remove();            
+            let divTxtArgu = argu.append('div');
+            divTxtArgu.selectAll('span').data(arg["argu:generateur"]).enter().append('span')
+                .attr('id',(g,i)=>{
+                    g.idSpan = 'span'+arg['o:id']+'_'+i;
+                    return g.idSpan;
+                })
+                .text((g,i)=>{
+                    if(i>0){
+                        if(g.type=='literal')return g['@value'];
+                        if(g.type=='resource'){
+                            getAleaDescription(g);
+                        }
+                    }
+                })
+
+        }
+        function getAleaDescription(d){
+            d3.json(d['@id'])
+                .then(rs=>{
+                    //récupère les description des la ressource
+                    let listeDesc = rs['dcterms:description'],
+                    //choisi une description dans la liste
+                    choixDesc = listeDesc[d3.randomInt(listeDesc.length-1)()];
+                    //affiche le description choisie
+                    d3.select('#'+d.idSpan).attr("class","gen").text(choixDesc['@value']);
+                });
+        }         
+
+    </script>
+</body>
+</html>
