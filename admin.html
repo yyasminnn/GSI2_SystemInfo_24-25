@@ -54,7 +54,7 @@
             .then(rs=>{
                 console.log(rs);
                 //ajouter la liste des argument du participant
-                let ulEtuArgu = d3.select('#etu'+dd["Votre identifiant omeka"]).append('ul'),
+                let ulEtuArgu = d3.select('#etu'+d["Votre identifiant omeka"]).append('ul'),
                 //ajoute chaque argument
                 arguments = ulEtuArgu.selectAll('li').data(rs).enter().append('li')
                     .attr('id',d=>'argu'+d['o:id'])
