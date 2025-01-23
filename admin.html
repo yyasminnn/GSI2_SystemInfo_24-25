@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSI2 24-25</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1 id="nomAuteur">Liste des étudiants</h1>
+    <div id="data-container"></div>
+
+    <script>
+        // Load JSON data
+        d3.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQkl_iQVTsYRlRkdXZd-jrl23mmhESsC2VBh7FreKp6xaRWJ3_aPXt_VxXwCnV31Rs72aXQ-sqyIuD4/pub?output=csv").then(function(data) {
+            // Select the container
+            var container = d3.select("#data-container");
+
+            // Append data to the container
+            let divEtu = container.selectAll("div")
+                .data(data)
+                .enter()
+                .append("div");
+            
+            divEtu.append("h2").text(function(d) { return d["Votre nom et prénom"]; });
+            divEtu.append("a").attr("href",d=>"https://"+d["Votre login github"]+".github.io/GSI2_SystemInfo_24-25/")
+                .text(d=>d["Votre login github"])
+        }).catch(function(error) {
+            console.error('Error loading or parsing data:', error);
+        });
+    </script>
+</body>
+</html>
