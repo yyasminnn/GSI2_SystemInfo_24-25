@@ -27,7 +27,7 @@
                 .data(data)
                 .enter()
                 .append("div")
-                .attr("id",d=>"etu"+d.id);
+                .attr("id",d=>"etu"+d["Votre identifiant omeka"]);
             
             divEtu.append("h2").text(function(d) { return d["Votre nom et prénom"]; });
             divEtu.append("a").attr("href",d=>"https://"+d["Votre login github"]+".github.io/GSI2_SystemInfo_24-25/")
@@ -54,7 +54,7 @@
             .then(rs=>{
                 console.log(rs);
                 //ajouter la liste des argument du participant
-                let ulEtuArgu = d3.select('#etu'+d.id).append('ul'),
+                let ulEtuArgu = d3.select('#etu'+dd["Votre identifiant omeka"]).append('ul'),
                 //ajoute chaque argument
                 arguments = ulEtuArgu.selectAll('li').data(rs).enter().append('li')
                     .attr('id',d=>'argu'+d['o:id'])
